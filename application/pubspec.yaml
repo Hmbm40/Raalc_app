@@ -1,0 +1,50 @@
+name: raalc_app
+description: "A new Flutter project with best iOS support and performance."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.8.1 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core & UI
+  cupertino_icons: ^1.0.8
+  flutter_screenutil: ^5.9.3
+  auto_size_text: ^3.0.0
+  lottie: ^3.3.1
+  fl_chart: ^1.0.0
+  intl: ^0.20.2
+  flutter_svg: ^2.2.0
+
+
+  # TTS and WebView
+  flutter_tts: ^4.2.3
+  flutter_inappwebview: ^6.1.5
+
+  # New Additions
+  connectivity_plus: ^6.1.4         # 🔌 Network detection
+  provider: ^6.1.2                  # 🧩 State management
+  get_it: ^8.0.3                    # 📦 Service locator
+  cached_network_image: ^3.3.1      # 🖼️ Image caching
+  shared_preferences: ^2.2.3        # 💾 Local storage
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/raalc_golden_logo.webp"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/raalc_golden_logo.webp
