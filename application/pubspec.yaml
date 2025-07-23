@@ -1,4 +1,4 @@
-name: raalc_app
+name: application
 description: "A new Flutter project with best iOS support and performance."
 publish_to: 'none'
 version: 0.1.0+1
@@ -19,7 +19,9 @@ dependencies:
   fl_chart: ^1.0.0
   intl: ^0.20.2
   flutter_svg: ^2.2.0
-
+  isar: ^3.1.0
+  isar_flutter_libs: any # Required for mobile
+  path_provider: any
 
   # TTS and WebView
   flutter_tts: ^4.2.3
@@ -37,6 +39,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  build_runner: any
+  isar_generator: any
 
 flutter_icons:
   android: true
@@ -47,4 +51,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/raalc_golden_logo.webp
+    # - assets/images/raalc_golden_logo.webp
