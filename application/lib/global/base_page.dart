@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:application/ui/theme.dart';
 
 class BasePage extends StatelessWidget {
 
@@ -23,7 +24,7 @@ class BasePage extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 255, 254, 255),
+        backgroundColor: AppTheme.ivoryWhite,
         body: Builder(
           builder: (context) {
             return Column(
