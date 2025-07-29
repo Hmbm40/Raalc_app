@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:application/LoginSignup/login.dart';
 import 'package:application/LoginSignup/start.dart';
-import 'package:application/LoginSignup/start.dart'; // Ensure this import exists
+// Ensure this import exists
 
-// import 'package:application/data/public/shared_preferences.dart'; // Temporarily disabled
+
+// Temporarily disabled
 
 void main() {
   runApp(const MainApp());
@@ -16,7 +16,7 @@ class MainApp extends StatelessWidget {
   // 🔧 Temporarily disabled logic to skip intro
   // Future<Widget> _getStartPage() async {
   //   bool hasSeenIntro = await SharedPrefsService.getHasSeenIntro();
-  //   return hasSeenIntro ? const LoginPage() : const IntroPage();
+  //   return hasSeenIntro ? const LoginPage(title: lastSlideTitle, description: lastSlideDescription) : const StartPage();
   // }
 
   @override

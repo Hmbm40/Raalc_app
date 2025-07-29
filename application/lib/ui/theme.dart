@@ -37,33 +37,33 @@ class AppTheme {
 
   // ------------------ 🌫 SHADOWS ------------------
   static List<BoxShadow> darkShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.35), offset: Offset(0, 4), blurRadius: 6),
+    BoxShadow(color: Colors.black.withOpacity(0.35), offset: const Offset(0, 4), blurRadius: 6),
   ];
 
   static List<BoxShadow> lightShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.15), offset: Offset(0, 3), blurRadius: 3),
+    BoxShadow(color: Colors.black.withOpacity(0.15), offset: const Offset(0, 3), blurRadius: 3),
   ];
 
   static List<BoxShadow> widgetShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.1), offset: Offset(0, 4), blurRadius: 6),
+    BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 4), blurRadius: 6),
   ];
 
   static List<BoxShadow> subtleShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 2), blurRadius: 8),
+    BoxShadow(color: Colors.black.withOpacity(0.05), offset: const Offset(0, 2), blurRadius: 8),
   ];
 
   static List<BoxShadow> boldShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 4), blurRadius: 4, spreadRadius: -1),
+    BoxShadow(color: Colors.black.withOpacity(0.2), offset: const Offset(0, 4), blurRadius: 4, spreadRadius: -1),
   ];
 
   static List<BoxShadow> neumorphicShadow = [
-    BoxShadow(color: Colors.white.withOpacity(0.8), offset: Offset(-3, -3), blurRadius: 6),
-    BoxShadow(color: Colors.black.withOpacity(0.15), offset: Offset(3, 3), blurRadius: 6),
+    BoxShadow(color: Colors.white.withOpacity(0.8), offset: const Offset(-3, -3), blurRadius: 6),
+    BoxShadow(color: Colors.black.withOpacity(0.15), offset: const Offset(3, 3), blurRadius: 6),
   ];
 
   static List<BoxShadow> balancedShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.1), offset: Offset(0, 3), blurRadius: 4, spreadRadius: 1),
-    BoxShadow(color: Colors.black.withOpacity(0.07), offset: Offset(0, -3), blurRadius: 8, spreadRadius: 1),
+    BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 3), blurRadius: 4, spreadRadius: 1),
+    BoxShadow(color: Colors.black.withOpacity(0.07), offset: const Offset(0, -3), blurRadius: 8, spreadRadius: 1),
   ];
 
   // ------------------ 🎯 RADII ------------------
@@ -91,4 +91,6 @@ class AppTheme {
   static double indicatorExpanded = 24.w;
   static double imagePadding = 20.w;
   static double logoHeight = 40.h;
+
+  static var titleFont;
 }

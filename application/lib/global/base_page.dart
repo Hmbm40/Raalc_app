@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:application/ui/theme.dart';
 
 class BasePage extends StatelessWidget {
-
-  final Widget Function(
-    BuildContext context,
-  ) contentBuilder;
+  final WidgetBuilder contentBuilder;
+  final bool scrollable;
+  final bool fullscreen; // NEW
 
   const BasePage({
-    required this.contentBuilder,
     super.key,
+    required this.contentBuilder,
+    this.scrollable = false,
+    this.fullscreen = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final body = LayoutBuilder(
+      builder: (context, constraints) {
+        final content = SizedBox(
+          height: constraints.maxHeight,
+          width: double.infinity,
+          child: contentBuilder(context),
+        );
+
+        return scrollable
+            ? SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: content,
+                ),
+              )
+            : content;
+      },
+    );
+
     return GestureDetector(
       onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
+        final currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus &&
             currentFocus.focusedChild != null) {
           currentFocus.unfocus();
@@ -25,19 +44,7 @@ class BasePage extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: AppTheme.ivoryWhite,
-        body: Builder(
-          builder: (context) {
-            return Column(
-              children: [
-                Expanded(
-                  child: contentBuilder(
-                    context,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+        body: fullscreen ? body : SafeArea(child: body),
       ),
     );
   }

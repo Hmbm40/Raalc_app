@@ -1,141 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:application/global/base_page.dart';
 import 'package:application/ui/progressLine.dart';
 import 'package:application/ui/theme.dart';
 import 'package:application/ui/spacing.dart';
-import 'package:application/ui/buttons.dart';
-import 'package:application/LoginSignup/login.dart'; // 🔸 Update this import if needed
+import 'package:application/ui/circleButton.dart';
+import 'package:application/LoginSignup/login.dart';
+import 'package:application/ui/lastSlide.dart';
 
-class StartPage extends StatefulWidget {
+class StartPage extends HookConsumerWidget {
   const StartPage({super.key});
 
   @override
-  State<StartPage> createState() => _StartPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pageController = usePageController();
+    final currentPage = useState(0);
+    final hasViewedLastPage = useState(false);
 
-class _StartPageState extends State<StartPage> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  bool _hasViewedLastPage = false;
+    final images = [
+      'assets/images/test1.jpeg',
+      'assets/images/test2.jpeg',
+      'assets/images/test3.jpeg',
+    ];
 
-  final List<String> images = [
-    'assets/images/test1.jpeg',
-    'assets/images/test2.jpeg',
-    'assets/images/test3.jpeg',
-  ];
-
-  final List<Map<String, String>> slideContent = [
-    {
-      'title': 'EVERYTHING YOU NEED, ALL IN ONE PLACE',
-      'description':
-          'All the tools and resources you need in one platform. Accessing your essentials is fast and hassle-free.',
-      'tag': 'Centralization',
-    },
-    {
-      'title': 'TAILORED FOR YOUR NEEDS',
-      'description':
-          'Custom solutions that adapt to your workflow, giving you full control and flexibility.',
-      'tag': 'Personalization',
-    },
-    {
-      'title': 'WELCOME TO RAALC',
-      'description':
-          'Your data is encrypted, your experience is stable, and your trust is never compromised.',
-      'tag': 'Security',
-    },
-  ];
-
-  void _nextSlide() {
-    if (_currentPage < images.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  Widget _buildTag(String tag) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      transitionBuilder: (child, animation) {
-        final slideAnimation = Tween<Offset>(
-          begin: const Offset(0, 0.1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutCubic,
-        ));
-
-        return SlideTransition(
-          position: slideAnimation,
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
-        );
-      },
-      child: Container(
-        key: ValueKey<String>(tag),
-        alignment: Alignment.center,
-        width: 140.w,
-        child: Text(
-          tag,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: AppTheme.tagFont,
-            color: Colors.grey,
-          ),
-        ),
-      ),
+    const lastSlideWidget = LastSlideContent(
+      title: lastSlideTitle,
+      description: lastSlideDescription,
     );
-  }
 
-  Widget _buildButton() {
-    final isLastPage = _hasViewedLastPage;
+    void nextSlide() {
+      if (currentPage.value < images.length - 1) {
+        pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
 
-    if (isLastPage) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
+    Widget buildTag(String tag) {
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        transitionBuilder: (child, animation) {
+          final slideAnimation = Tween<Offset>(
+            begin: const Offset(0, 0.1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          ));
+          return SlideTransition(
+            position: slideAnimation,
+            child: FadeTransition(opacity: animation, child: child),
           );
         },
         child: Container(
-          width: 48.w,
-          height: 48.w,
-          decoration: BoxDecoration(
-            color: AppTheme.goldenTan,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(10.w),
-            child: Image.asset(
-              'assets/images/white_logo.webp',
-              fit: BoxFit.contain,
+          key: ValueKey<String>(tag),
+          alignment: Alignment.center,
+          width: 140.w,
+          child: Text(
+            tag,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize:
+                  AppTheme.tagFont * MediaQuery.of(context).textScaleFactor,
+              color: Colors.grey,
             ),
           ),
         ),
       );
-    } else {
-      return PrimaryCircleButton(
-        icon: Icons.arrow_forward,
-        onPressed: _nextSlide,
-      );
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
+          Widget buildButton() {
+            if (hasViewedLastPage.value) {
+              return GestureDetector(
+                onTap: () {
+        Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(
+            title: 'WELCOME TO RAALC',
+            description:
+                'Your data is encrypted, your experience is stable, and your trust is never compromised.',
+          ),
+        ),
+      );
+
+
+            
+          },
+          child: Container(
+            width: 48.w,
+            height: 48.w,
+            decoration: const BoxDecoration(
+              color: AppTheme.goldenTan,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(10.w),
+              child: Image.asset(
+                'assets/images/white_logo.webp',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        );
+      } else {
+        return PrimaryCircleButton(onPressed: nextSlide);
+      }
+    }
+
     return BasePage(
+      fullscreen: true,
+      scrollable: false,
       contentBuilder: (context) {
         return Column(
           children: [
@@ -143,15 +128,13 @@ class _StartPageState extends State<StartPage> {
               height: 0.6.sh,
               width: double.infinity,
               child: PageView.builder(
-                controller: _pageController,
+                controller: pageController,
                 physics: const ClampingScrollPhysics(),
                 onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                    if (index == images.length - 1) {
-                      _hasViewedLastPage = true;
-                    }
-                  });
+                  currentPage.value = index;
+                  if (index == images.length - 1) {
+                    hasViewedLastPage.value = true;
+                  }
                 },
                 itemCount: images.length,
                 itemBuilder: (context, index) {
@@ -184,38 +167,53 @@ class _StartPageState extends State<StartPage> {
                   children: [
                     Center(
                       child: ProgressLine(
-                        currentPage: _currentPage,
-                        pageCount: images.length,
+                        currentPage: currentPage.value,
                         totalPages: images.length,
                       ),
                     ),
-                    SizedBox(height: AppSpacing.mediumVertical),
-                    Text(
-                      slideContent[_currentPage]['title']!,
-                      style: TextStyle(
-                        fontFamily: 'Poppins-ExtraBold',
-                        fontSize: AppTheme.headlineFont,
-                        color: AppTheme.navyBlue,
+                    SpacingExtensions(AppSpacing.mediumVertical).verticalSpace,
+                    if (currentPage.value == images.length - 1)
+                      lastSlideWidget
+                    else ...[
+                      Text(
+                        currentPage.value == 0
+                            ? 'EVERYTHING YOU NEED, ALL IN ONE PLACE'
+                            : 'TAILORED FOR YOUR NEEDS',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-ExtraBold',
+                          fontSize: AppTheme.headlineFont *
+                              MediaQuery.textScaleFactorOf(context),
+                          color: AppTheme.navyBlue,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: AppSpacing.mediumVertical),
-                    Text(
-                      slideContent[_currentPage]['description']!,
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: AppTheme.bodyFont,
-                        color: AppTheme.midnightBlue,
+                      SpacingExtensions(AppSpacing.mediumVertical)
+                          .verticalSpace,
+                      Text(
+                        currentPage.value == 0
+                            ? 'All the tools and resources you need in one platform. Accessing your essentials is fast and hassle-free.'
+                            : 'Custom solutions that adapt to your workflow, giving you full control and flexibility.',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: AppTheme.bodyFont *
+                              MediaQuery.textScaleFactorOf(context),
+                          color: AppTheme.midnightBlue,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: AppSpacing.largerVertical),
+                    ],
+                    SpacingExtensions(AppSpacing.largerVertical).verticalSpace,
                     const Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _buildTag(slideContent[_currentPage]['tag']!),
-                        _buildButton(),
+                        buildTag(
+                          currentPage.value == 0
+                              ? 'Centralization'
+                              : currentPage.value == 1
+                                  ? 'Personalization'
+                                  : 'Security',
+                        ),
+                        buildButton(),
                       ],
                     ),
                   ],

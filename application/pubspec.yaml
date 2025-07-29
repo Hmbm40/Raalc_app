@@ -5,7 +5,7 @@ version: 0.1.0+1
 
 environment:
   sdk: ">=3.8.1 <4.0.0"
-  flutter: ">=3.27.0"
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
@@ -20,29 +20,50 @@ dependencies:
   intl: ^0.20.2
   flutter_svg: ^2.2.0
   isar: ^3.1.0
-  isar_flutter_libs: any # Required for mobile
-  path_provider: any
+  isar_flutter_libs: ^3.1.0
+  path_provider: ^2.1.3
   tabler_icons: ^2.5.0+1
-
 
   # TTS and WebView
   flutter_tts: ^4.2.3
-  flutter_inappwebview: ^6.1.5
+  flutter_inappwebview: ^6.0.0
 
   # New Additions
-  connectivity_plus: ^6.1.4         # 🔌 Network detection
-  provider: ^6.1.2                  # 🧩 State management
-  get_it: ^8.0.3                    # 📦 Service locator
-  cached_network_image: ^3.3.1      # 🖼️ Image caching
-  shared_preferences: ^2.2.3        # 💾 Local storage
+  connectivity_plus: ^6.1.4
+  dio: ^5.4.3+1
+  get_it: ^7.6.7
+  cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.3
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  flutter_hooks: ^0.21.2
+  hooks_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+
+  flutter_lints: ^3.0.1
   flutter_launcher_icons: ^0.14.4
-  build_runner: any
-  isar_generator: any
+  build_runner: ^2.6.0
+  isar_generator: ^3.1.0
+  riverpod_generator: ^2.6.5
+  custom_lint: ^0.7.6
+  riverpod_lint: ^2.6.5
+  
+dependency_overrides:
+  js: ^0.7.2
+  analyzer: ^8.0.0
+  build: ^3.0.0
+  build_runner_core: ^9.2.0
+  source_gen: ^3.0.0
+  dart_style: ^3.1.1
+  petitparser: ^7.0.0
+  rxdart: ^0.28.0
+  material_color_utilities: ^0.13.0
+  xml: ^6.6.0
+  vector_math: ^2.2.0
+  meta: ^1.17.0
 
 flutter_icons:
   android: true
@@ -53,11 +74,12 @@ flutter:
   uses-material-design: true
 
   assets:
-     - assets/images/raalc_golden_logo.webp
-     - assets/images/test1.jpeg
-     - assets/images/test2.jpeg
-     - assets/images/test3.jpeg
-     - assets/images/white_logo.webp
+    - assets/images/raalc_golden_logo.webp
+    - assets/images/test1.jpeg
+    - assets/images/test2.jpeg
+    - assets/images/test3.jpeg
+    - assets/images/white_logo.webp
+    - assets/images/arrow-big-right-line.svg
 
   fonts:
     - family: Poppins
@@ -69,4 +91,4 @@ flutter:
         - asset: assets/Poppins/Poppins-Bold.ttf
           weight: 700
         - asset: assets/Poppins/Poppins-ExtraBold.ttf
-        
+
