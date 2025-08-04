@@ -20,10 +20,17 @@ class StartPage extends HookConsumerWidget {
     final hasViewedLastPage = useState(false);
 
     final images = [
-      'assets/images/test1.jpeg',
-      'assets/images/test2.jpeg',
-      'assets/images/test3.jpeg',
+      const AssetImage('assets/images/test1.jpeg'),
+      const AssetImage('assets/images/test2.jpeg'),
+      const AssetImage('assets/images/test3.jpeg'),
     ];
+
+    useEffect(() {
+      for (final image in images) {
+        precacheImage(image, context);
+      }
+      return null;
+    }, const []);
 
     const lastSlideWidget = LastSlideContent(
       title: lastSlideTitle,
@@ -134,8 +141,8 @@ class StartPage extends HookConsumerWidget {
                 },
                 itemCount: images.length,
                 itemBuilder: (context, index) {
-                  return Image.asset(
-                    images[index],
+                  return Image(
+                    image: images[index],
                     fit: BoxFit.cover,
                     width: double.infinity,
                   );
