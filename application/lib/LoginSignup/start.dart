@@ -13,25 +13,25 @@ import 'package:application/ui/lastSlide.dart';
 class StartPage extends HookConsumerWidget {
   const StartPage({super.key});
 
+  static const List<String> images = [
+    'assets/images/test1.jpeg',
+    'assets/images/test2.jpeg',
+    'assets/images/test3.jpeg',
+  ];
+
+  static const LastSlideContent lastSlideWidget = LastSlideContent(
+    title: lastSlideTitle,
+    description: lastSlideDescription,
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = usePageController();
     final currentPage = useState(0);
     final hasViewedLastPage = useState(false);
 
-    final images = [
-      'assets/images/test1.jpeg',
-      'assets/images/test2.jpeg',
-      'assets/images/test3.jpeg',
-    ];
-
-    const lastSlideWidget = LastSlideContent(
-      title: lastSlideTitle,
-      description: lastSlideDescription,
-    );
-
     void nextSlide() {
-      if (currentPage.value < images.length - 1) {
+      if (currentPage.value < StartPage.images.length - 1) {
         pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -128,14 +128,14 @@ class StartPage extends HookConsumerWidget {
                 physics: const ClampingScrollPhysics(),
                 onPageChanged: (index) {
                   currentPage.value = index;
-                  if (index == images.length - 1) {
+                  if (index == StartPage.images.length - 1) {
                     hasViewedLastPage.value = true;
                   }
                 },
-                itemCount: images.length,
+                itemCount: StartPage.images.length,
                 itemBuilder: (context, index) {
                   return Image.asset(
-                    images[index],
+                    StartPage.images[index],
                     fit: BoxFit.cover,
                     width: double.infinity,
                   );
@@ -164,12 +164,12 @@ class StartPage extends HookConsumerWidget {
                     Center(
                       child: ProgressLine(
                         currentPage: currentPage.value,
-                        totalPages: images.length,
+                        totalPages: StartPage.images.length,
                       ),
                     ),
                     SpacingExtensions(AppSpacing.mediumVertical).verticalSpace,
-                    if (currentPage.value == images.length - 1)
-                      lastSlideWidget
+                    if (currentPage.value == StartPage.images.length - 1)
+                      StartPage.lastSlideWidget
                     else ...[
                       Text(
                         currentPage.value == 0
