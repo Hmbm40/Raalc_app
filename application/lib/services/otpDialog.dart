@@ -57,7 +57,7 @@ class OtpDialog extends HookWidget {
             Text(
               'Verify your account',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 18.sp * textScale,
                 fontWeight: FontWeight.w800,
@@ -72,7 +72,7 @@ class OtpDialog extends HookWidget {
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 12.sp * textScale,
                   color: AppTheme.gray,
@@ -155,10 +155,10 @@ class OtpDialog extends HookWidget {
                 Navigator.of(context).pop();
                 await onBiometric();
               },
-              icon: Icon(Icons.fingerprint, color: AppTheme.navyBlue),
-              label: Text(
+              icon: const Icon(Icons.fingerprint, color: AppTheme.navyBlue),
+              label: const Text(
                 'Biometric Verification',
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
                   color: AppTheme.navyBlue,
