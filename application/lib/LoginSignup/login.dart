@@ -122,7 +122,7 @@ class LoginPage extends HookConsumerWidget {
                       Text(
                         title,
                         textAlign: TextAlign.start,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: AppTheme.headlineFont * textScale,
                           fontFamily: 'Poppins-ExtraBold',
                           color: AppTheme.navyBlue,
@@ -135,7 +135,7 @@ class LoginPage extends HookConsumerWidget {
                           child: Text(
                             description!,
                             textAlign: TextAlign.justify,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: AppTheme.bodyFont * textScale,
                               fontFamily: 'Poppins-medium',
                               color: Colors.white,
@@ -176,7 +176,7 @@ class LoginPage extends HookConsumerWidget {
                           width: 60.w,
                           child: Text(
                             isPasswordVisible.value ? 'HIDE' : 'SHOW',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Montserrat',
                               color: AppTheme.black,
                               fontSize: 10.sp,
@@ -212,9 +212,9 @@ class LoginPage extends HookConsumerWidget {
                                 endIndent: 8.w,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'OR',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
