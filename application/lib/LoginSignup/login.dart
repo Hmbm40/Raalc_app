@@ -122,7 +122,7 @@ class LoginPage extends HookConsumerWidget {
                       Text(
                         title,
                         textAlign: TextAlign.start,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: AppTheme.headlineFont * textScale,
                           fontFamily: 'Poppins-ExtraBold',
                           color: AppTheme.navyBlue,
@@ -135,7 +135,7 @@ class LoginPage extends HookConsumerWidget {
                           child: Text(
                             description!,
                             textAlign: TextAlign.justify,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: AppTheme.bodyFont * textScale,
                               fontFamily: 'Poppins-medium',
                               color: Colors.white,
@@ -179,7 +179,6 @@ class LoginPage extends HookConsumerWidget {
                             style: const TextStyle(
                               fontFamily: 'Montserrat',
                               color: AppTheme.black,
-                              fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

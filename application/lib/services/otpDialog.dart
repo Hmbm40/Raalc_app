@@ -54,12 +54,11 @@ class OtpDialog extends HookWidget {
             ),
             // ── Title ──
             SizedBox(height: 16.h),
-            Text(
+            const Text(
               'Verify your account',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 18.sp * textScale,
                 fontWeight: FontWeight.w800,
                 color: AppTheme.navyBlue,
               ),
@@ -74,7 +73,6 @@ class OtpDialog extends HookWidget {
               text: TextSpan(
                 style: const TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: 12.sp * textScale,
                   color: AppTheme.gray,
                 ),
                 children: [
