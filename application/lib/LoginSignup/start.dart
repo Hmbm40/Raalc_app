@@ -13,10 +13,10 @@ import 'package:application/ui/lastSlide.dart';
 class StartPage extends HookConsumerWidget {
   const StartPage({super.key});
 
-  static const List<AssetImage> images = [
-    AssetImage('assets/images/test1.jpeg'),
-    AssetImage('assets/images/test2.jpeg'),
-    AssetImage('assets/images/test3.jpeg'),
+  static const List<String> images = [
+    'assets/images/test1.jpeg',
+    'assets/images/test2.jpeg',
+    'assets/images/test3.jpeg',
   ];
 
   static const LastSlideContent lastSlideWidget = LastSlideContent(
@@ -31,8 +31,8 @@ class StartPage extends HookConsumerWidget {
     final hasViewedLastPage = useState(false);
 
     useEffect(() {
-      for (final image in StartPage.images) {
-        precacheImage(image, context);
+      for (final imagePath in StartPage.images) {
+        precacheImage(AssetImage(imagePath), context);
       }
       return null;
     }, const []);
@@ -79,19 +79,16 @@ class StartPage extends HookConsumerWidget {
       );
     }
 
-          Widget buildButton() {
-            if (hasViewedLastPage.value) {
-              return GestureDetector(
-                onTap: () {
-        Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-        builder: (context) => const LoginPage(description: null),
-          ),
-      );
-
-
-            
+    Widget buildButton() {
+      if (hasViewedLastPage.value) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginPage(description: null),
+              ),
+            );
           },
           child: Container(
             width: 48.w,
@@ -141,8 +138,8 @@ class StartPage extends HookConsumerWidget {
                 },
                 itemCount: StartPage.images.length,
                 itemBuilder: (context, index) {
-                  return Image(
-                    image: StartPage.images[index],
+                  return Image.asset(
+                    StartPage.images[index],
                     fit: BoxFit.cover,
                     width: double.infinity,
                   );
