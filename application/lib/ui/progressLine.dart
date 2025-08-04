@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,13 +53,13 @@ class ProgressLine extends HookWidget {
       showNewDots.value = false;
       displayedPage.value = prevPage ?? currentPage;
 
-      Future.delayed(const Duration(milliseconds: 200), () {
+      final timer = Timer(const Duration(milliseconds: 200), () {
         showNewDots.value = true;
         displayedPage.value = currentPage;
         controller.forward(from: 0);
       });
 
-      return null;
+      return timer.cancel;
     }, [currentPage]);
 
     return SizedBox(
