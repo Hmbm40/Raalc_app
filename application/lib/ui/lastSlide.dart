@@ -3,7 +3,7 @@ import 'package:application/ui/theme.dart';
 import 'package:application/ui/spacing.dart';
 
 const String lastSlideTitle = 'WELCOME TO RAALC';
-const String lastSlideDescription = 'Your data is encrypted, your experience is stable, and your trust is never compromised.';
+const String lastSlideDescription = 'Your data is encrypted and your trust is never compromised.';
 
 class LastSlideContent extends StatelessWidget {
   final String title;

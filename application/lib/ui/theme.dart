@@ -10,6 +10,9 @@ class AppTheme {
   static const Color warmGold = Color(0xFFDAB460);
   static const Color offWhiteVanilla = Color(0xFFF9F4EC);
   static const Color ivoryWhite = Color(0xFFF9F9F6);
+  static const Color gray = Color(0xFF737373);
+  static const Color black = Color(0xFF070707);
+
 
   // ------------------ 🖋 FONT ------------------
   static const String fontFamily = 'Inter'; // Make sure it's registered in pubspec.yaml

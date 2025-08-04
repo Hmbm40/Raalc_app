@@ -79,12 +79,8 @@ class StartPage extends HookConsumerWidget {
         Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginPage(
-            title: 'WELCOME TO RAALC',
-            description:
-                'Your data is encrypted, your experience is stable, and your trust is never compromised.',
+        builder: (context) => const LoginPage(description: null),
           ),
-        ),
       );
 
 
