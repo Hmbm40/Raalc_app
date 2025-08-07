@@ -14,15 +14,15 @@ class OtpDialog extends HookWidget {
   final Future<void> Function() onBiometric;
 
   const OtpDialog({
-    super.key,
-    required this.email,
-    required this.onVerify,
-    required this.onBiometric,
-  });
+  super.key,
+  required this.email,
+  required this.onVerify,
+  required this.onBiometric,
+});
+
 
   @override
   Widget build(BuildContext context) {
-    final textScale = MediaQuery.textScaleFactorOf(context);
     final codeController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
 

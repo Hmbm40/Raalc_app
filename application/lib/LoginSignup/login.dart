@@ -11,9 +11,11 @@ import '../services/popUp.dart';
 import '../ui/textField.dart';
 import '../ui/squareButtons.dart';
 import 'signUp.dart';
+import '../ui/logoAnimation.dart';
+import '../ui/showSufix.dart';
 
 class LoginPage extends HookConsumerWidget {
-  final String title;
+  final String? title;
   final String? description;
 
   const LoginPage({
@@ -25,23 +27,21 @@ class LoginPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textScale = MediaQuery.textScaleFactorOf(context);
-    const headerImagePath = 'assets/images/RAALC Golden Circle transparent - HQ.png';
+    const headerAnimationPath = 'assets/animations/Logo.json';
     final double maxLogoHeight = (0.16.sh).clamp(72.h, 120.h).toDouble();
 
-    // 🧠 Controllers and State
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final isPasswordVisible = useState(false);
     final isButtonEnabled = useState(false);
     final isForgotButtonFaded = useState(false);
 
-    // 🧠 Validation logic
     useEffect(() {
       void validate() {
         final email = emailController.text.trim();
         final password = passwordController.text;
         final emailValid = RegExp(
-          r"^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$",
+          r"^[\w\.-]+@([\w\-]+\.)+[a-zA-Z]{2,}$",
         ).hasMatch(email);
         final passwordValid = password.length >= 8;
         isButtonEnabled.value = emailValid && passwordValid;
@@ -55,19 +55,24 @@ class LoginPage extends HookConsumerWidget {
       };
     }, []);
 
-    // 🧠 Callbacks
-    void onOtpRequested() async {
-      await PopupService.showOtpDialog(
-        context: context,
-        email: emailController.text.trim(),
-        onVerified: (code) async {
-          // Handle verification
-        },
-        onBiometric: () async {
-          // Handle biometric
-        },
-      );
-    }
+      void onOtpRequested() async {
+        await PopupService.showOtpDialog(
+          context: context,
+          email: emailController.text.trim(),
+          onVerified: (code) async {
+            // ✅ Handle OTP verification here
+            // print('OTP entered: $code');
+          },
+          onBiometric: () async {
+            // ✅ Handle biometric verification here
+            // print('Biometric auth requested');
+          },
+        );
+      }
+
+
+
+  
 
     void onForgotPasswordPressed() async {
       isForgotButtonFaded.value = true;
@@ -75,25 +80,23 @@ class LoginPage extends HookConsumerWidget {
       await PopupService.showForgotPasswordDialog(
         context: context,
         emailController: emailController,
-        onSendLink: (email) async {
-          // Handle reset link
-        },
+        onSendLink: (email) async {},
       );
       await Future.delayed(const Duration(milliseconds: 100));
       isForgotButtonFaded.value = false;
     }
 
     void onRegisterPressed() {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const SignUpPage()),
-      );
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const SignUpPage()));
     }
 
     return BasePage(
       contentBuilder: (context) {
         return Column(
           children: [
-            // ⬆️ Header
+            SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
             Expanded(
               flex: 3,
               child: SafeArea(
@@ -112,20 +115,11 @@ class LoginPage extends HookConsumerWidget {
                             maxWidth: 0.24.sw,
                             maxHeight: maxLogoHeight,
                           ),
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Image.asset(headerImagePath),
+                          child: HeaderAnimation(
+                            assetPath: headerAnimationPath,
+                            maxHeight: maxLogoHeight,
+                            maxWidth: 0.24.sw,
                           ),
-                        ),
-                      ),
-                      SpacingExtensions(35).verticalSpace,
-                      Text(
-                        title,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: AppTheme.headlineFont * textScale,
-                          fontFamily: 'Poppins-ExtraBold',
-                          color: AppTheme.navyBlue,
                         ),
                       ),
                       if (description != null) ...[
@@ -148,8 +142,6 @@ class LoginPage extends HookConsumerWidget {
                 ),
               ),
             ),
-
-            // ⬇️ Form Section
             Expanded(
               flex: 8,
               child: Container(
@@ -169,20 +161,10 @@ class LoginPage extends HookConsumerWidget {
                       controller: passwordController,
                       hintText: 'Password',
                       obscureText: !isPasswordVisible.value,
-                      suffixIcon: InkWell(
-                        onTap: () => isPasswordVisible.value = !isPasswordVisible.value,
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 60.w,
-                          child: Text(
-                            isPasswordVisible.value ? 'HIDE' : 'SHOW',
-                            style: const TextStyle(
-                              fontFamily: 'Montserrat',
-                              color: AppTheme.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                      suffixIcon: ShowHideSuffix(
+                        isVisible: isPasswordVisible.value,
+                        onTap: () =>
+                            isPasswordVisible.value = !isPasswordVisible.value,
                       ),
                     ),
                   ],
@@ -213,8 +195,8 @@ class LoginPage extends HookConsumerWidget {
                             ),
                             const Text(
                               'OR',
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Montserrat',

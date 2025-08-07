@@ -8,7 +8,8 @@ class AppSpacing {
   // 🔸 Vertical Spacing (double values)
   static double tinyVertical = 4.h;
   static double smallVertical = 8.h;
-  static double smallerVertical = 6.h; // ➕ ADD THIS
+  static double smallerVertical = 6.h;
+  static double semiRegularVertical = 12.h;
   static double regularVertical = 16.h;
   static double mediumVertical = 24.h;
   static double largeVertical = 32.h;

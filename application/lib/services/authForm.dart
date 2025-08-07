@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../ui/spacing.dart';
 
@@ -9,6 +8,7 @@ class AuthForm extends HookConsumerWidget {
   final List<Widget> secondaryActions;
   final Widget? footer;
   final EdgeInsets? padding;
+  final List<Widget>? extraWidgets; // ✅ NEW
 
   const AuthForm({
     super.key,
@@ -17,6 +17,7 @@ class AuthForm extends HookConsumerWidget {
     this.secondaryActions = const [],
     this.footer,
     this.padding,
+    this.extraWidgets, // ✅ NEW
   });
 
   @override
@@ -33,8 +34,14 @@ class AuthForm extends HookConsumerWidget {
               SpacingExtensions(AppSpacing.mediumVertical).verticalSpace,
             ],
 
-             SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
+            SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
 
+            if (extraWidgets != null) ...[
+              for (var widget in extraWidgets!) ...[
+                widget,
+                SpacingExtensions(AppSpacing.mediumVertical).verticalSpace,
+              ],
+            ],
 
             for (var button in primaryButtons) ...[
               button,

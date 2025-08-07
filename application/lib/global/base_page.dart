@@ -35,10 +35,11 @@ class BasePage extends StatelessWidget {
     );
 
     return GestureDetector(
+      
       onTap: () {
         final currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus &&
-            currentFocus.focusedChild != null) {
+            !(currentFocus.focusedChild?.context?.widget is EditableText)) {
           currentFocus.unfocus();
         }
       },

@@ -1,67 +1,46 @@
-// lib/ui/textField.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../ui/theme.dart';
 
-class AuthTextField extends StatefulWidget {
+class NumberTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final TextInputType keyboardType;
-  final bool obscureText;
   final Widget? suffixIcon;
   final Color? underlineColor;
   final TextStyle? hintStyle;
-  final FocusNode? focusNode;
+  final int? maxLength;
 
-  /// ✅ NEW: allow callers to inject input formatters (e.g., deny spaces)
-  final List<TextInputFormatter>? inputFormatters;
-
-  const AuthTextField({
+  const NumberTextField({
     super.key,
     required this.controller,
     required this.hintText,
-    this.keyboardType = TextInputType.text,
-    this.obscureText = false,
     this.suffixIcon,
     this.underlineColor,
     this.hintStyle,
-    this.focusNode,
-    this.inputFormatters, // ✅ NEW
+    required this.maxLength,
   });
 
   @override
-  State<AuthTextField> createState() => _AuthTextFieldState();
+  State<NumberTextField> createState() => _NumberTextFieldState();
 }
 
-class _AuthTextFieldState extends State<AuthTextField> {
-  late final FocusNode _focusNode;
-  late final VoidCallback _focusListener;
-  late final VoidCallback _textListener;
+class _NumberTextFieldState extends State<NumberTextField> {
+  late FocusNode _focusNode;
 
+  bool get _isLabelFloating => _focusNode.hasFocus || widget.controller.text.isNotEmpty;
   bool get _isFocused => _focusNode.hasFocus;
-  bool get _isLabelFloating =>
-      _focusNode.hasFocus || widget.controller.text.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = widget.focusNode ?? FocusNode();
-
-    _focusListener = () => setState(() {});
-    _textListener = () => setState(() {});
-
-    _focusNode.addListener(_focusListener);
-    widget.controller.addListener(_textListener);
+    _focusNode = FocusNode();
+    _focusNode.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(_focusListener);
-    widget.controller.removeListener(_textListener);
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
-    }
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -76,8 +55,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         color: Colors.transparent,
         border: Border(
           bottom: BorderSide(
-            color:
-                widget.underlineColor ?? (_isFocused ? AppTheme.goldenTan : AppTheme.gray),
+            color: widget.underlineColor ?? (_isFocused ? AppTheme.goldenTan : AppTheme.gray),
             width: 1.5,
           ),
         ),
@@ -85,7 +63,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
-          // Floating label
+          // ── Floating Label ──
           AnimatedPositioned(
             duration: const Duration(milliseconds: 180),
             left: 4.w,
@@ -103,13 +81,16 @@ class _AuthTextFieldState extends State<AuthTextField> {
             ),
           ),
 
-          // TextField
-          TextField(
+          // ── Text Input Field ──
+                  TextField(
             controller: widget.controller,
             focusNode: _focusNode,
-            keyboardType: widget.keyboardType,
-            obscureText: widget.obscureText,
-            inputFormatters: widget.inputFormatters, // ✅ wired in
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              if (widget.maxLength != null)
+                LengthLimitingTextInputFormatter(widget.maxLength),
+            ],
             cursorColor: Colors.black,
             style: TextStyle(
               fontFamily: 'Montserrat',

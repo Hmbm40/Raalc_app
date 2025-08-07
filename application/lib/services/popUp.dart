@@ -3,8 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../ui/theme.dart';
 import '../ui/spacing.dart';
 import '../ui/squareButtons.dart';
-import '../services/otpDialog.dart'; 
-import '../services/forgotPasswordDialog.dart'; // import the file above
+import '../ui/textField.dart';
+import 'otpDialog.dart'; // ✅ Import the NEW OTP dialog from the correct file
+
+
+// ─────────────────────────────────────────────────────────────
+// BasePopupDialog: Reusable base for legacy-style dialogs
+// ─────────────────────────────────────────────────────────────
 
 abstract class BasePopupDialog extends StatelessWidget {
   final String title;
@@ -20,25 +25,16 @@ abstract class BasePopupDialog extends StatelessWidget {
     required this.onPrimaryPressed,
   });
 
-  /// ---------------------------------------------------------------------------
-  /// Base class for all our pop-up dialogs. Provides title, body widget,
-  /// and primary/secondary actions. Sized responsively via ScreenUtil.
-  /// ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScaleFactorOf(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ), // 🔳 Hard corners
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: 280.h, // 🔽 Minimal height constraint
-        ),
+        constraints: BoxConstraints(minHeight: 280.h),
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.section),
           child: Stack(
@@ -49,7 +45,6 @@ abstract class BasePopupDialog extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Title ──
                     Text(
                       title,
                       style: TextStyle(
@@ -59,15 +54,9 @@ abstract class BasePopupDialog extends StatelessWidget {
                         color: AppTheme.navyBlue,
                       ),
                     ),
-
                     SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
-
-                    // ── Body ──
                     body,
-
                     SpacingExtensions(AppSpacing.largeVertical).verticalSpace,
-
-                    // ── Primary Button ──
                     SquareButton(
                       text: primaryLabel,
                       onPressed: onPrimaryPressed,
@@ -78,8 +67,6 @@ abstract class BasePopupDialog extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // ── Close Button (X) ──
               Positioned(
                 top: 0,
                 right: 0,
@@ -96,10 +83,33 @@ abstract class BasePopupDialog extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// Forgot Password dialog using BasePopupDialog
+// ─────────────────────────────────────────────────────────────
+
+class ForgotPasswordDialog extends BasePopupDialog {
+  ForgotPasswordDialog({
+    super.key,
+    required TextEditingController emailController,
+    required VoidCallback onSend,
+  }) : super(
+          title: 'Reset Password',
+          body: AuthTextField(
+            controller: emailController,
+            hintText: 'Email address',
+            keyboardType: TextInputType.emailAddress,
+          ),
+          primaryLabel: 'Send Link',
+          onPrimaryPressed: onSend,
+        );
+}
+
+// ─────────────────────────────────────────────────────────────
+// PopupService — Use this to show dialogs
+// ─────────────────────────────────────────────────────────────
+
 class PopupService {
-  /// ──────────────────────────────────────────────────────────
-  /// OTP Dialog
-  /// ──────────────────────────────────────────────────────────
+  /// ✅ Show modern OTP dialog (from otpDialog.dart)
   static Future<void> showOtpDialog({
     required BuildContext context,
     required String email,
@@ -108,7 +118,7 @@ class PopupService {
   }) {
     return showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (_) => OtpDialog(
         email: email,
         onVerify: onVerified,
@@ -117,9 +127,7 @@ class PopupService {
     );
   }
 
-  /// ──────────────────────────────────────────────────────────
-  /// Forgot-Password Dialog
-  /// ──────────────────────────────────────────────────────────
+  /// Forgot password dialog (still using legacy design)
   static Future<void> showForgotPasswordDialog({
     required BuildContext context,
     required TextEditingController emailController,
@@ -127,7 +135,7 @@ class PopupService {
   }) {
     return showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (_) => ForgotPasswordDialog(
         emailController: emailController,
         onSend: () async {
