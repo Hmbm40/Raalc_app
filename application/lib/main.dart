@@ -3,16 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:application/LoginSignup/start.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:application/services/connectivityWrapper.dart'; // ⬅️ Add this
-// ✅ Added overlay support
+import 'package:hooks_riverpod/hooks_riverpod.dart'; // ⬅️ ProviderScope
+import 'package:application/ui/theme.dart'; // ⬅️ use the new design system
 
 void main() {
-  runApp(const MainApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: MainApp())); // ⬅️ MUST wrap the whole app
 }
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-      // 🔧 Temporarily disabled logic to skip intro
+  // 🔧 Temporarily disabled logic to skip intro
   // Future<Widget> _getStartPage() async {
   //   bool hasSeenIntro = await SharedPrefsService.getHasSeenIntro();
   //   return hasSeenIntro ? const LoginPage(title: lastSlideTitle, description: lastSlideDescription) : const StartPage();
@@ -29,10 +31,9 @@ class MainApp extends StatelessWidget {
           child: ConnectivityWrapper(
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                fontFamily: 'Poppins',
-                textTheme: Typography.englishLike2018.apply(fontFamily: 'Poppins'),
-              ),
+              theme: buildLightTheme(),
+              darkTheme: buildDarkTheme(),
+              // themeMode: ThemeMode.light,
               home: const StartPage(), // Or LoginPage if skipping intro
             ),
           ),
@@ -40,21 +41,18 @@ class MainApp extends StatelessWidget {
       },
     );
 
-
-            // 🔙 Restore this block when re-enabling intro flow
-            // home: FutureBuilder<Widget>(
-            //   future: _getStartPage(),
-            //   builder: (context, snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.waiting) {
-            //       return const Scaffold(
-            //         body: Center(child: CircularProgressIndicator()),
-            //       );
-            //     } else {
-            //       return snapshot.data!;
-            //     }
-            //   },
-            // ),
-
-
-              }
-} 
+    // 🔙 Restore this block when re-enabling intro flow
+    // home: FutureBuilder<Widget>(
+    //   future: _getStartPage(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return const Scaffold(
+    //         body: Center(child: CircularProgressIndicator()),
+    //       );
+    //     } else {
+    //       return snapshot.data!;
+    //     }
+    //   },
+    // ),
+  }
+}

@@ -22,7 +22,7 @@ class CountryCodeSelector extends StatelessWidget {
       child: Container(
         height: 48.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(
               color: AppTheme.goldenTan,

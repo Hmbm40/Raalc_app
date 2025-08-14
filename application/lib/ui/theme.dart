@@ -1,99 +1,181 @@
-// lib/theme/theme.dart
+// lib/ui/theme.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppTheme {
-  // ------------------ 🎨 COLOR PALETTE ------------------
-  static const Color navyBlue = Color(0xFF223752);
-  static const Color goldenTan = Color(0xFFC59D41);
-  static const Color midnightBlue = Color(0xFF001431);
-  static const Color warmGold = Color(0xFFDAB460);
-  static const Color offWhiteVanilla = Color(0xFFF9F4EC);
-  static const Color ivoryWhite = Color(0xFFF9F9F6);
-  static const Color gray = Color(0xFF737373);
-  static const Color black = Color(0xFF070707);
+/// =======================
+/// Design Tokens
+/// =======================
+@immutable
+class AppTokens extends ThemeExtension<AppTokens> {
+  final EdgeInsets screenPadding;     // Global default page padding
+  final double radiusSm;
+  final double radiusMd;
+  final double radiusLg;
 
+  const AppTokens({
+    required this.screenPadding,
+    required this.radiusSm,
+    required this.radiusMd,
+    required this.radiusLg,
+  });
 
-  // ------------------ 🖋 FONT ------------------
-  static const String fontFamily = 'Inter'; // Make sure it's registered in pubspec.yaml
+  @override
+  AppTokens copyWith({
+    EdgeInsets? screenPadding,
+    double? radiusSm,
+    double? radiusMd,
+    double? radiusLg,
+  }) {
+    return AppTokens(
+      screenPadding: screenPadding ?? this.screenPadding,
+      radiusSm: radiusSm ?? this.radiusSm,
+      radiusMd: radiusMd ?? this.radiusMd,
+      radiusLg: radiusLg ?? this.radiusLg,
+    );
+  }
 
-  static TextStyle headline = TextStyle(
-    fontSize: 20.sp,
-    fontWeight: FontWeight.bold,
-    fontFamily: fontFamily,
-    color: navyBlue,
+  @override
+  AppTokens lerp(ThemeExtension<AppTokens>? other, double t) => this;
+}
+
+/// =======================
+/// Brand Colors (centralized)
+/// =======================
+class Palette {
+  static const seed = Color(0xFF524686);   // your footer color
+  static const textPrimary = Color(0xFF111111);
+  static const textSecondary = Color(0xFF5E5E5E);
+
+  static const surface = Colors.white;
+  static const surfaceDark = Color(0xFF0E0E11);
+}
+
+/// =======================
+/// Typography
+/// =======================
+TextTheme buildTextTheme() {
+  final base = Typography.englishLike2018.apply(fontFamily: 'Poppins');
+
+  // Scale *once* centrally via ScreenUtil; pages never set sizes.
+  return base.copyWith(
+    displayLarge:   base.displayLarge?.copyWith(  fontSize: 57.sp, color: Palette.textPrimary),
+    displayMedium:  base.displayMedium?.copyWith( fontSize: 45.sp, color: Palette.textPrimary),
+    displaySmall:   base.displaySmall?.copyWith(  fontSize: 36.sp, color: Palette.textPrimary),
+    headlineLarge:  base.headlineLarge?.copyWith( fontSize: 32.sp, color: Palette.textPrimary),
+    headlineMedium: base.headlineMedium?.copyWith(fontSize: 28.sp, color: Palette.textPrimary),
+    headlineSmall:  base.headlineSmall?.copyWith( fontSize: 24.sp, color: Palette.textPrimary),
+    titleLarge:     base.titleLarge?.copyWith(    fontSize: 22.sp, fontWeight: FontWeight.w600, color: Palette.textPrimary),
+    titleMedium:    base.titleMedium?.copyWith(   fontSize: 16.sp, fontWeight: FontWeight.w600, color: Palette.textPrimary),
+    titleSmall:     base.titleSmall?.copyWith(    fontSize: 14.sp, fontWeight: FontWeight.w600, color: Palette.textPrimary),
+    bodyLarge:      base.bodyLarge?.copyWith(     fontSize: 16.sp, color: Palette.textPrimary),
+    bodyMedium:     base.bodyMedium?.copyWith(    fontSize: 14.sp, color: Palette.textPrimary),
+    bodySmall:      base.bodySmall?.copyWith(     fontSize: 12.sp, color: Palette.textSecondary),
+    labelLarge:     base.labelLarge?.copyWith(    fontSize: 14.sp, fontWeight: FontWeight.w600, color: Palette.textPrimary),
+    labelMedium:    base.labelMedium?.copyWith(   fontSize: 12.sp, color: Palette.textSecondary),
+    labelSmall:     base.labelSmall?.copyWith(    fontSize: 11.sp, color: Palette.textSecondary),
   );
+}
 
-  static TextStyle body = TextStyle(
-    fontSize: 14.sp,
-    fontWeight: FontWeight.normal,
-    fontFamily: fontFamily,
-    color: midnightBlue,
+/// =======================
+/// Component Themes
+/// =======================
+InputDecorationTheme buildInputDecorationTheme(TextTheme t) {
+  final border = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10.r),
+    borderSide: const BorderSide(color: Color(0xFFE3E3E3)),
   );
-
-  static TextStyle tag = TextStyle(
-    fontSize: 12.sp,
-    fontWeight: FontWeight.w400,
-    fontFamily: fontFamily,
-    color: goldenTan,
+  return InputDecorationTheme(
+    isDense: true,
+    contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+    hintStyle: t.bodyMedium?.copyWith(color: Palette.textSecondary),
+    labelStyle: t.bodyMedium,
+    border: border,
+    enabledBorder: border,
+    focusedBorder: border.copyWith(borderSide: const BorderSide(color: Color(0xFF9C9C9C))),
+    errorBorder: border.copyWith(borderSide: const BorderSide(color: Colors.red)),
   );
+}
 
-  // ------------------ 🌫 SHADOWS ------------------
-  static List<BoxShadow> darkShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.35), offset: const Offset(0, 4), blurRadius: 6),
-  ];
+TextButtonThemeData buildTextButtonTheme(TextTheme t) {
+  return TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: Palette.textPrimary,
+      textStyle: t.labelLarge,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      minimumSize: const Size(0, 0),
+    ),
+  );
+}
 
-  static List<BoxShadow> lightShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.15), offset: const Offset(0, 3), blurRadius: 3),
-  ];
+ElevatedButtonThemeData buildElevatedButtonTheme(TextTheme t, ColorScheme cs) {
+  return ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: cs.primary,
+      textStyle: t.labelLarge,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      elevation: 0,
+    ),
+  );
+}
 
-  static List<BoxShadow> widgetShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 4), blurRadius: 6),
-  ];
+/// =======================
+/// ThemeData (Light/Dark)
+/// =======================
+ThemeData buildLightTheme() {
+  final scheme = ColorScheme.fromSeed(seedColor: Palette.seed, brightness: Brightness.light);
+  final textTheme = buildTextTheme();
 
-  static List<BoxShadow> subtleShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.05), offset: const Offset(0, 2), blurRadius: 8),
-  ];
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: scheme,
+    fontFamily: 'Poppins',
+    textTheme: textTheme,
+    scaffoldBackgroundColor: Palette.surface,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Palette.surface,
+      foregroundColor: Palette.textPrimary,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: textTheme.titleLarge,
+    ),
+    inputDecorationTheme: buildInputDecorationTheme(textTheme),
+    textButtonTheme: buildTextButtonTheme(textTheme),
+    elevatedButtonTheme: buildElevatedButtonTheme(textTheme, scheme),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    extensions: [
+      AppTokens(
+        screenPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        radiusSm: 8.r,
+        radiusMd: 12.r,
+        radiusLg: 20.r,
+      ),
+    ],
+  );
+}
 
-  static List<BoxShadow> boldShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.2), offset: const Offset(0, 4), blurRadius: 4, spreadRadius: -1),
-  ];
+ThemeData buildDarkTheme() {
+  final light = buildLightTheme();
+  final scheme = ColorScheme.fromSeed(seedColor: Palette.seed, brightness: Brightness.dark);
+  return light.copyWith(
+    colorScheme: scheme,
+    scaffoldBackgroundColor: Palette.surfaceDark,
+    textTheme: light.textTheme.apply(bodyColor: Colors.white, displayColor: Colors.white),
+    appBarTheme: light.appBarTheme.copyWith(
+      backgroundColor: Palette.surfaceDark,
+      foregroundColor: Colors.white,
+      titleTextStyle: light.textTheme.titleLarge?.copyWith(color: Colors.white),
+    ),
+  );
+}
 
-  static List<BoxShadow> neumorphicShadow = [
-    BoxShadow(color: Colors.white.withOpacity(0.8), offset: const Offset(-3, -3), blurRadius: 6),
-    BoxShadow(color: Colors.black.withOpacity(0.15), offset: const Offset(3, 3), blurRadius: 6),
-  ];
-
-  static List<BoxShadow> balancedShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 3), blurRadius: 4, spreadRadius: 1),
-    BoxShadow(color: Colors.black.withOpacity(0.07), offset: const Offset(0, -3), blurRadius: 8, spreadRadius: 1),
-  ];
-
-  // ------------------ 🎯 RADII ------------------
-  static double baseRadius = 12.r;
-  static double fullRadius = 50.r;
-
-  // ------------------ 📐 SIZES (ScreenUtil Based) ------------------
-  static double buttonHeight = 50.h;
-  static double buttonCorner = 8.r;
-  static double inputHeight = 56.h;
-  static double iconSize = 24.w;
-
-  static double headlineFont = 20.sp;
-  static double bodyFont = 14.sp;
-  static double tagFont = 12.sp;
-
-  static double pageHorizontalPadding = 20.w;
-  static double pageVerticalPadding = 16.h;
-  static double sectionSpacing = 32.h;
-  static double blockSpacing = 16.h;
-  static double smallSpacing = 8.h;
-
-  static double borderWidth = 2.w;
-  static double indicatorSize = 8.w;
-  static double indicatorExpanded = 24.w;
-  static double imagePadding = 20.w;
-  static double logoHeight = 40.h;
-
-  static var titleFont;
+/// =======================
+/// Ergonomics on BuildContext
+/// =======================
+extension ThemeX on BuildContext {
+  TextTheme get t => Theme.of(this).textTheme;
+  ColorScheme get cs => Theme.of(this).colorScheme;
+  AppTokens get tokens => Theme.of(this).extension<AppTokens>()!;
 }

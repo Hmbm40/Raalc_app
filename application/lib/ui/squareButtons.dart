@@ -40,7 +40,7 @@ class SquareButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
           ),
         ),
         child: Text(
@@ -91,7 +91,7 @@ class CompactSquareButton extends StatelessWidget {
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
             ),
           ),
           child: Text(

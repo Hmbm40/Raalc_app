@@ -60,7 +60,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
         children: [
           widget.child,
           if (!online)
-            Positioned(
+            const Positioned(
               top: 0,
               left: 0,
               right: 0,
@@ -70,11 +70,11 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12),
                     child: Text(
                       'No Internet Connection',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

@@ -39,7 +39,7 @@ class BasePage extends StatelessWidget {
       onTap: () {
         final currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus &&
-            !(currentFocus.focusedChild?.context?.widget is EditableText)) {
+            currentFocus.focusedChild?.context?.widget is! EditableText) {
           currentFocus.unfocus();
         }
       },

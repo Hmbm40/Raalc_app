@@ -19,70 +19,87 @@ class ForgotPasswordDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScaleFactorOf(context);
+    final size = MediaQuery.of(context).size;
+    final kb = MediaQuery.of(context).viewInsets.bottom;
+
+    // Bound dialog height to visible viewport; clip anything beyond it.
+    final double maxH =
+        (size.height - kb - 32.h).clamp(240.h, size.height * 0.9).toDouble();
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero), // ⬛ flat edges
-      insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 60.h),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       backgroundColor: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(AppSpacing.section),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── close (X) ────────────────────────────────────────────────
-            Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Icon(Icons.close, size: 20.sp, color: AppTheme.black),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxH),
+        child: ClipRect(
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(), // clip; don't scroll UI
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.section),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Close (X)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Icon(Icons.close, size: 20.sp, color: AppTheme.black),
+                    ),
+                  ),
+
+                  // Title
+                  Text(
+                    'Forgot Password',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 22.sp * textScale,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
+
+                  // Description
+                  Text(
+                    'Enter the email address for your account and we’ll send '
+                    'a confirmation email to reset your password.',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.5.sp * textScale,
+                      height: 1.35,
+                      color: Colors.black.withOpacity(.75),
+                    ),
+                  ),
+                  SpacingExtensions(AppSpacing.largerVertical).verticalSpace,
+
+                  // Email field
+                  AuthTextField(
+                    controller: emailController,
+                    hintText: 'Email address',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+
+                  SpacingExtensions(AppSpacing.xlVertical).verticalSpace,
+
+                  // Send button
+                  SquareButton(
+                    text: 'Send Code',
+                    backgroundColor: Colors.black,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus(); // hide keyboard
+                      Navigator.of(context).pop();
+                      await onSend();
+                    },
+                  ),
+                ],
               ),
             ),
-            // ── title ────────────────────────────────────────────────────
-            Text(
-              'Forgot Password',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 22.sp * textScale,
-                fontWeight: FontWeight.w800,
-                color: Colors.black,
-              ),
-            ),
-            SpacingExtensions(AppSpacing.smallVertical).verticalSpace,
-            // ── description ─────────────────────────────────────────────
-            Text(
-              'Enter the email address with your account and we’ll send '
-              'an email with confirmation to reset your password.',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.5.sp * textScale,
-                height: 1.35,
-                color: Colors.black.withOpacity(.75),
-              ),
-            ),
-            SpacingExtensions(AppSpacing.largerVertical).verticalSpace,
-            // ── label + text-field ─────────────────────────────────────
-         
-            SpacingExtensions(AppSpacing.tinyVertical).verticalSpace,
-            AuthTextField(
-              controller: emailController,
-              hintText: 'Email address',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            // large spacer to push Send button down (matches screenshot)
-            SpacingExtensions(AppSpacing.xlVertical).verticalSpace,
-            // ── send button ─────────────────────────────────────────────
-            SquareButton(
-              text: 'Send Code',
-              backgroundColor: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w600,
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await onSend();
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );
