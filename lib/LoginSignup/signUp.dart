@@ -1,6 +1,8 @@
 // lib/LoginSignup/signUp.dart
 import 'package:application/services/reqChecker.dart';
+import 'package:application/ui/countryCode.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,29 +11,27 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:application/global/basePage.dart';
 import 'package:application/global/splitPage.dart';
 
-import 'package:application/ui/spacing.dart';           // Space / Insets / Gap / Spacing
-import 'package:application/ui/theme.dart';             // ThemeX: context.t / context.palette / context.tokens
+import 'package:application/ui/spacing.dart';
+import 'package:application/ui/theme.dart';
 import 'package:application/ui/textField.dart';
 import 'package:application/ui/numberField.dart';
 import 'package:application/ui/textButton.dart';
 import 'package:application/ui/squareButtons.dart';
 import 'package:application/ui/errorText.dart';
-import 'package:application/ui/showSufix.dart';         // keep your existing suffix
-import 'package:application/services/popUp.dart';       // PopupService
+import 'package:application/ui/showSufix.dart';
+import 'package:application/services/popUp.dart';
 
 import 'package:application/services/authForm.dart';
 import 'package:application/utils/validators.dart';
 import 'package:application/ErrorHandling/validationHooks.dart';
+
 import 'package:application/LoginSignup/login.dart';
 
 // 🔗 API + OTP state + helpers
 import 'package:dio/dio.dart';
-import 'package:application/services/authApi.dart';     // authApiProvider (Riverpod)
+import 'package:application/services/authApi.dart';
 import 'package:application/state/otpState.dart';
 import 'package:application/utils/phone.dart';
-
-// NEW: country picker launcher (iOS native via MethodChannel, Material fallback otherwise)
-import '../ui/countryCode.dart';
 
 class SignUpPage extends HookConsumerWidget {
   const SignUpPage({super.key});
@@ -47,6 +47,7 @@ class SignUpPage extends HookConsumerWidget {
 
     // Country code & ToS
     final countryCode = useState('+971');
+    final selectedCountry = useState<CountryPickResult?>(null); // 🇦🇪 + meta
     final agreeToTOS = useState(false);
 
     // Focus / visibility
@@ -118,6 +119,12 @@ class SignUpPage extends HookConsumerWidget {
       return () => passwordFocus.removeListener(listener);
     }, [passwordFocus]);
 
+    // Initialize selected country from current dial code (to show correct flag on first build)
+    useEffect(() {
+      selectedCountry.value = countryForDial(countryCode.value);
+      return null;
+    }, const []);
+
     final api = ref.read(authApiProvider);
 
     // Submit with API + OTP flow (in-memory, TTL + attempts)
@@ -174,7 +181,6 @@ class SignUpPage extends HookConsumerWidget {
                 );
                 return;
               }
-
               if (payload.attempts >= 5) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Too many attempts. Please request a new code.')),
@@ -205,11 +211,9 @@ class SignUpPage extends HookConsumerWidget {
               await save.when(
                 ok: (_) async {
                   ref.read(otpStateProvider.notifier).state = null;
-
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Registration complete. You can sign in now.')),
                   );
-
                   if (Navigator.canPop(context)) {
                     Navigator.pop(context);
                   } else {
@@ -272,14 +276,14 @@ class SignUpPage extends HookConsumerWidget {
       loading.value = false;
     }
 
-    /// NEW: single entry for country picker
     Future<void> showCountryPicker(BuildContext context) async {
-      final dial = await pickCountryDialCode(
+      final picked = await pickCountryDialCode(
         context,
         initialDialCode: countryCode.value,
       );
-      if (dial != null && dial.isNotEmpty) {
-        countryCode.value = dial;
+      if (picked != null) {
+        countryCode.value = picked.dialCode;
+        selectedCountry.value = picked; // update flag + meta
       }
     }
 
@@ -288,11 +292,7 @@ class SignUpPage extends HookConsumerWidget {
 
     // Header
     final header = Padding(
-      padding: Insets.only(
-        top: Space.xl,
-        left: Space.xxl,
-        right: Space.xxl,
-      ),
+      padding: Insets.only(top: Space.xl, left: Space.xxl, right: Space.xxl),
       child: Center(
         child: Text(
           'Create Your Account',
@@ -351,19 +351,18 @@ class SignUpPage extends HookConsumerWidget {
                 ],
               ),
 
-              // Country Code + Phone
+              // Country Code + Phone (with flag)
               Column(
                 key: phoneKey,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      // Country code tap target
                       Container(
-                        width: 0.25.sw,
+                        width: 0.34.sw,
                         height: 48.h,
                         alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(color: palette.goldenTan, width: 1.5),
@@ -371,13 +370,22 @@ class SignUpPage extends HookConsumerWidget {
                         ),
                         child: GestureDetector(
                           onTap: () => showCountryPicker(context),
-                          child: Text(
-                            countryCode.value,
-                            style: TextStyle(
-                              fontSize: 14.sp * textScale,
-                              fontFamily: 'Montserrat',
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
+                          child: Row(
+                            children: [
+                              Text(
+                                (selectedCountry.value?.flagEmoji ?? '🏳️'),
+                                style: TextStyle(fontSize: 18.sp),
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                countryCode.value,
+                                style: TextStyle(
+                                  fontSize: 14.sp * textScale,
+                                  fontFamily: 'Montserrat',
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -432,9 +440,9 @@ class SignUpPage extends HookConsumerWidget {
                         controller: passwordController,
                         requirements: [
                           Requirement(label: 'At least 8 characters',        validator: (v) => v.length >= 8),
-                          Requirement(label: 'At least 1 special character',  validator: (v) =>   RegExp(r'[!@#\\\$&*~]').hasMatch(v)),
-                          Requirement(label: 'At least 1 number',             validator: (v) =>   RegExp(r'\\d').hasMatch(v)),
-                          Requirement(label: 'At least 1 capital letter',     validator: (v) =>   RegExp(r'[A-Z]').hasMatch(v)),
+                          Requirement(label: 'At least 1 special character',  validator: (v) => RegExp(r'[!@#\$&*~]').hasMatch(v)),
+                          Requirement(label: 'At least 1 number',             validator: (v) => RegExp(r'\d').hasMatch(v)),
+                          Requirement(label: 'At least 1 capital letter',     validator: (v) => RegExp(r'[A-Z]').hasMatch(v)),
                         ],
                       ),
                     ),
