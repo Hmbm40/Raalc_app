@@ -1,3 +1,0 @@
-// Fallback if Pods doesn't generate a profile config
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
-#include "Generated.xcconfig"

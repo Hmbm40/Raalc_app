@@ -1,6 +1,6 @@
 {
-    "name": "raalc_application",
-    "short_name": "raalc_application",
+    "name": "raalc_app",
+    "short_name": "raalc_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
