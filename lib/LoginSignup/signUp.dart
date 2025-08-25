@@ -358,37 +358,48 @@ class SignUpPage extends HookConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 0.34.sw,
-                        height: 48.h,
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: palette.goldenTan, width: 1.5),
+                      // ---------- ONLY CHANGE: content-sized dial code ----------
+                      IntrinsicWidth(
+                        child: Container(
+                          // width removed to allow content-driven width
+                          height: 48.h,
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: palette.goldenTan,
+                                width: 1.5,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: GestureDetector(
-                          onTap: () => showCountryPicker(context),
-                          child: Row(
-                            children: [
-                              Text(
-                                (selectedCountry.value?.flagEmoji ?? '🏳️'),
-                                style: TextStyle(fontSize: 18.sp),
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                countryCode.value,
-                                style: TextStyle(
-                                  fontSize: 14.sp * textScale,
-                                  fontFamily: 'Montserrat',
-                                  color: Theme.of(context).colorScheme.onSurface,
+                          child: GestureDetector(
+                            onTap: () => showCountryPicker(context),
+                            behavior: HitTestBehavior.opaque,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min, // hug content
+                              children: [
+                                Text(
+                                  (selectedCountry.value?.flagEmoji ?? '🏳️'),
+                                  style: TextStyle(fontSize: 18.sp),
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 6.w),
+                                Text(
+                                  countryCode.value,
+                                  style: TextStyle(
+                                    fontSize: 14.sp * textScale,
+                                    fontFamily: 'Montserrat',
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
+                      // ---------- END ONLY CHANGE ----------
                       SizedBox(width: 12.w),
                       Expanded(
                         child: Focus(
@@ -397,7 +408,8 @@ class SignUpPage extends HookConsumerWidget {
                             controller: phoneController,
                             hintText: 'Phone Number',
                             maxLength: 9,
-                            underlineColor: phoneFV.error != null ? Colors.red : null,
+                            underlineColor:
+                                phoneFV.error != null ? Colors.red : null,
                           ),
                         ),
                       ),

@@ -8,7 +8,7 @@ public class SwiftNativeCountryPickerPlugin: NSObject, FlutterPlugin {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "native_country_picker",
-                                       binaryMessenger: registrar.messenger())
+    binaryMessenger: registrar.messenger())
     let instance = SwiftNativeCountryPickerPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
