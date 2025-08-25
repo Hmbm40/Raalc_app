@@ -12,7 +12,7 @@ final dioProvider = Provider<Dio>((ref) {
     headers: {'Accept': 'application/json'},
   ));
   dio.interceptors.addAll([
-    AuthInterceptor(ref),
+    AuthInterceptor(ref, dio),
     if (Env.enableLogs) LoggerInterceptor(),
   ]);
   return dio;
