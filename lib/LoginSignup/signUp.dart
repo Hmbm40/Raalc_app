@@ -32,6 +32,7 @@ import 'package:dio/dio.dart';
 import 'package:application/services/authApi.dart';
 import 'package:application/state/otpState.dart';
 import 'package:application/utils/phone.dart';
+import 'package:application/network/errorMapper.dart';
 
 class SignUpPage extends HookConsumerWidget {
   const SignUpPage({super.key});
@@ -226,18 +227,21 @@ class SignUpPage extends HookConsumerWidget {
                 err: (e, _) async {
                   if (e is DioException) {
                     final status = e.response?.statusCode ?? 0;
-                    final data = e.response?.data;
-                    final msg = (data is Map && data['message'] != null)
-                        ? data['message'].toString()
-                        : 'Could not complete registration. Please try again.';
                     if (status == 400 || status == 401 || status == 422) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                      handleDioError(
+                        context,
+                        e,
+                        resetLoading: () => loading.value = false,
+                      );
                       return;
                     }
                   }
                   ref.read(otpStateProvider.notifier).state = null;
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(const SnackBar(content: Text('Unexpected error. Please try again.')));
+                  handleDioError(
+                    context,
+                    e,
+                    resetLoading: () => loading.value = false,
+                  );
                 },
               );
             },
@@ -248,9 +252,6 @@ class SignUpPage extends HookConsumerWidget {
           if (e is DioException) {
             final status = e.response?.statusCode ?? 0;
             final data = e.response?.data;
-            final msg = (data is Map && data['message'] != null)
-                ? data['message'].toString()
-                : 'Registration failed. Please try again.';
 
             if (status == 422 || status == 409) {
               final errors = (data is Map && data['errors'] is Map)
@@ -263,13 +264,13 @@ class SignUpPage extends HookConsumerWidget {
                 extPhoneError.value = (errors['phone'] as List).first.toString();
               }
             }
-
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registration failed. Please try again.')),
-            );
           }
+
+          handleDioError(
+            context,
+            e,
+            resetLoading: () => loading.value = false,
+          );
         },
       );
 
