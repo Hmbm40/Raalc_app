@@ -76,7 +76,7 @@ class _NumberTextFieldState extends State<NumberTextField> {
     final Color unfocusedColor =
         widget.underlineColor ?? theme.colorScheme.onSurface.withOpacity(0.4);
     final Color focusedColor =
-        widget.focusedUnderlineColor ?? theme.colorScheme.primary;
+        widget.focusedUnderlineColor ?? AppColors.light.goldenTan;
     final Color inputColor =
         widget.textColor ?? (theme.textTheme.bodyLarge?.color ?? Colors.black);
     final Color caretColor = widget.cursorColor ?? Colors.black;

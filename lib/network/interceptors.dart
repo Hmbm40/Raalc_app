@@ -6,8 +6,7 @@ import 'tokenStore.dart';
 
 /// Interceptor that automatically attaches the access token to requests and
 /// refreshes it transparently when a 401 is encountered. Uses a shared
-/// [Dio] instance with interceptors temporarily disabled while the refresh is
-/// in-flight and guards concurrent refresh attempts with a cached [Future].
+/// [Dio] instance and guards concurrent refresh attempts with a cached [Future].
 class AuthInterceptor extends QueuedInterceptor {
   final Ref ref;
   final Dio _dio;
@@ -39,21 +38,29 @@ class AuthInterceptor extends QueuedInterceptor {
       final refresh = ref.read(tokenStoreProvider)?.refreshToken;
       if (refresh != null) {
         try {
+          // If a refresh is already in progress, wait for it.
           _refreshFuture ??= _refreshToken(refresh);
           final tokenPair = await _refreshFuture!;
+
           if (tokenPair != null) {
+            // Save the new token.
             ref.read(tokenStoreProvider.notifier).save(tokenPair);
+
+            // Retry the failed request with the new access token.
             final request = err.requestOptions;
             request.headers['Authorization'] = 'Bearer ${tokenPair.accessToken}';
+
             final retryResponse = await _dio.fetch(request);
             return handler.resolve(retryResponse);
           }
         } catch (_) {
           // fall through to clear tokens and propagate error
         } finally {
+          // Always reset for the next time.
           _refreshFuture = null;
         }
-        // Refresh failed
+
+        // Refresh failed: clear tokens and propagate error.
         ref.read(tokenStoreProvider.notifier).save(null);
         return handler.next(err);
       }
@@ -65,7 +72,6 @@ class AuthInterceptor extends QueuedInterceptor {
   /// interceptors disabled so it doesn't trigger itself.
   Future<TokenPair?> _refreshToken(String refresh) async {
     try {
-      _dio.lock();
       final res = await _dio.post(
         '/auth/refresh',
         data: {'refresh_token': refresh},
@@ -77,8 +83,6 @@ class AuthInterceptor extends QueuedInterceptor {
       }
     } catch (_) {
       // swallow errors; caller handles null
-    } finally {
-      _dio.unlock();
     }
     return null;
   }
@@ -93,6 +97,7 @@ class LoggerInterceptor extends Interceptor {
     }
     handler.next(options);
   }
+
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (Env.enableLogs) {

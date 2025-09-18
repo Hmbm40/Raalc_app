@@ -299,7 +299,7 @@ class SignUpPage extends HookConsumerWidget {
           'Create Your Account',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: (context.t.titleLarge?.fontSize ?? 22.sp) * textScale,
+            fontSize: (context.t.titleLarge?.fontSize ?? 34.sp) * textScale,
             fontWeight: FontWeight.bold,
             fontFamily: 'Montserrat',
             color: Theme.of(context).colorScheme.onSurface,
